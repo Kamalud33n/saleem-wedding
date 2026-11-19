@@ -1,0 +1,495 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------
+   Design tokens — South Indian silk stationery invitation:
+   peacock teal, marigold wax, vermilion thread, parchment.
+--------------------------------------------------------- */
+@theme inline {
+  --color-peacock: #0f3d3e;
+  --color-peacock-dark: #082728;
+  --color-peacock-light: #17595a;
+
+  --color-marigold: #e8a93c;
+  --color-marigold-light: #f2c97a;
+  --color-marigold-dark: #b8791f;
+
+  --color-vermilion: #b23a2e;
+  --color-vermilion-dark: #8a2b21;
+
+  --color-parchment: #f6eedd;
+  --color-parchment-dark: #eadfc4;
+  --color-ivory: #faf6ee;
+  --color-envelope-bridge: #cebf9d;
+
+  --color-betel: #33532e;
+  --color-ink: #241b12;
+  --color-ink-soft: #4a4030;
+
+  --font-display: "Cormorant", "Times New Roman", serif;
+  --font-hero: "Playfair Display", "Cormorant", serif;
+  --font-label: "Cinzel", "Georgia", serif;
+  --font-body: "Manrope", "Segoe UI", sans-serif;
+  --font-tamil: "Noto Serif Tamil", "Noto Sans Tamil", "Tamil MN", serif;
+
+  --shadow-paper: 0 18px 40px -28px rgba(36, 27, 18, 0.35);
+  --shadow-invite: 0 24px 50px -30px rgba(8, 39, 40, 0.45);
+}
+
+:root {
+  --background: var(--color-parchment);
+  --foreground: var(--color-ink);
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --vv-top: 0px;
+  --vv-left: 0px;
+  --vv-width: 100%;
+  --vv-height: 100dvh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Default app shell — Safari, desktop, Android (unchanged behavior). */
+.app-visual-frame {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  margin: 0;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Opening cover — default: fixed fullscreen (works on Safari / desktop). */
+.invite-cover {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  min-height: 100svh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: var(--color-envelope-bridge);
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+.invite-cover-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.invite-cover-layer :where(img, video) {
+  position: absolute !important;
+  inset: 0 !important;
+}
+
+.invite-cover-media {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: cover;
+  object-position: center center;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: opacity;
+}
+
+/* ---------------------------------------------------------
+   iOS Chrome / Edge only — pin to visualViewport (CriOS / EdgiOS).
+   Scoped to html.ios-chrome-viewport; other browsers never match.
+--------------------------------------------------------- */
+html.ios-chrome-viewport,
+html.ios-chrome-viewport body {
+  height: 100%;
+  overflow: hidden;
+}
+
+html.ios-chrome-viewport body {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+html.ios-chrome-viewport .app-visual-frame {
+  position: fixed;
+  top: var(--vv-top, 0px);
+  left: var(--vv-left, 0px);
+  z-index: 1;
+  width: var(--vv-width, 100%);
+  height: var(--vv-height, 100dvh);
+  min-height: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  /* Containing block for absolute invite-cover + floating controls.
+     Scroll lives on .app-scroll-region so controls stay pinned. */
+  transform: translateZ(0);
+}
+
+html.ios-chrome-viewport .app-scroll-region {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+html.ios-chrome-viewport .app-scroll-region.is-scrollable {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+html.ios-chrome-viewport .invite-cover {
+  position: absolute;
+  inset: 0;
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+}
+
+/* Pin language/music to the visual frame — not the scrolling region. */
+html.ios-chrome-viewport .invite-floating-controls {
+  position: absolute;
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  right: max(0.75rem, env(safe-area-inset-right));
+  z-index: 60;
+}
+
+html.ios-chrome-viewport .journey-hero {
+  min-height: var(--vv-height, 100dvh);
+  height: var(--vv-height, 100dvh);
+  padding-top: var(--safe-top, env(safe-area-inset-top));
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+html.ios-chrome-viewport .cinematic-scene {
+  height: var(--vv-height, 100dvh);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.paper-grain {
+  background-image:
+    radial-gradient(circle at 18% 22%, rgba(36, 27, 18, 0.03) 0, transparent 42%),
+    radial-gradient(circle at 82% 78%, rgba(36, 27, 18, 0.028) 0, transparent 46%),
+    radial-gradient(circle at 50% 50%, rgba(184, 121, 31, 0.025) 0, transparent 55%);
+}
+
+/* ---------------------------------------------------------
+   Journey canvas — Hero → Discover → Countdown as ONE world.
+   Scenes are transparent; atmosphere lives on the shared canvas.
+--------------------------------------------------------- */
+.journey-canvas {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse 90% 35% at 50% 8%, rgba(242, 201, 122, 0.16), transparent 58%),
+    radial-gradient(ellipse 70% 30% at 50% 48%, rgba(216, 155, 138, 0.05), transparent 60%),
+    radial-gradient(ellipse 80% 28% at 50% 78%, rgba(242, 201, 122, 0.08), transparent 55%),
+    linear-gradient(
+      180deg,
+      var(--color-ivory) 0%,
+      var(--color-ivory) 22%,
+      color-mix(in srgb, var(--color-ivory) 82%, var(--color-parchment)) 38%,
+      var(--color-parchment) 52%,
+      color-mix(in srgb, var(--color-ivory) 55%, var(--color-parchment)) 68%,
+      var(--color-ivory) 84%,
+      color-mix(in srgb, var(--color-ivory) 70%, var(--color-parchment)) 100%
+    );
+}
+
+.journey-canvas::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  background-image:
+    radial-gradient(circle at 18% 22%, rgba(36, 27, 18, 0.025) 0, transparent 42%),
+    radial-gradient(circle at 82% 58%, rgba(36, 27, 18, 0.02) 0, transparent 46%),
+    radial-gradient(circle at 50% 88%, rgba(184, 121, 31, 0.02) 0, transparent 50%);
+}
+
+.journey-scene {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+.journey-hero {
+  min-height: 100svh;
+  height: 100dvh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.silk-wash {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(242, 201, 122, 0.18), transparent 60%),
+    radial-gradient(ellipse 70% 45% at 50% 110%, rgba(15, 61, 62, 0.06), transparent 55%),
+    var(--color-parchment);
+}
+
+.text-shadow-soft {
+  text-shadow: 0 1px 14px rgba(36, 27, 18, 0.12);
+}
+
+.invite-surface {
+  background: color-mix(in srgb, white 72%, var(--color-parchment));
+  box-shadow: var(--shadow-paper);
+}
+
+/* ---------------------------------------------------------
+   Bilingual Tamil typography roles
+   Optical balance with English — not 1:1 rem matching.
+   Tamil glyphs read taller; sizes stay compact but readable.
+--------------------------------------------------------- */
+.font-tamil {
+  font-family: var(--font-tamil);
+  font-style: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Hero couple names — display, but optically lighter than EN clamps */
+.ta-hero-name {
+  font-size: clamp(1.55rem, 6.5vw, 2.2rem);
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+@media (min-width: 768px) {
+  .ta-hero-name {
+    font-size: clamp(1.4rem, 2.6vw, 1.95rem);
+    line-height: 1.22;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ta-hero-name {
+    font-size: clamp(1.5rem, 2.5vw, 2.15rem);
+  }
+}
+
+/* Long parent lines under hero names — compact, still readable */
+.ta-hero-parent {
+  font-size: clamp(0.65rem, 2.5vw, 0.74rem);
+  line-height: 1.4;
+  font-weight: 400;
+  letter-spacing: 0;
+  max-width: min(20rem, 94vw);
+  margin-inline: auto;
+  padding-inline: 0.25rem;
+}
+
+@media (min-width: 768px) {
+  .ta-hero-parent {
+    font-size: 0.68rem;
+    line-height: 1.38;
+    max-width: 11rem;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ta-hero-parent {
+    font-size: clamp(0.68rem, 0.9vw, 0.76rem);
+    max-width: 14.5rem;
+  }
+}
+
+/* Section display / H2 */
+.ta-heading {
+  font-size: clamp(1.35rem, 4.6vw, 1.65rem);
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+/* In-card titles (ceremonies, RSVP options) — below section heading */
+.ta-card-title {
+  font-size: clamp(1.12rem, 3.8vw, 1.3rem);
+  line-height: 1.32;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+/* Soft display lines (footer closing, short lead sentences) */
+.ta-lead {
+  font-size: clamp(0.9rem, 3.2vw, 1.05rem);
+  line-height: 1.48;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* Supporting subtitle under headers */
+.ta-subhead {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+@media (min-width: 640px) {
+  .ta-subhead {
+    font-size: 0.875rem;
+    line-height: 1.52;
+  }
+}
+
+/* Body / notes / paragraphs */
+.ta-body {
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  font-weight: 400;
+}
+
+/* Eyebrows, small labels */
+.ta-caption {
+  font-size: 0.6875rem;
+  line-height: 1.35;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+/* Date / time / meta rows */
+.ta-meta {
+  font-size: 0.75rem;
+  line-height: 1.45;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* CTA / form buttons */
+.ta-button {
+  font-size: 0.8125rem;
+  line-height: 1.25;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+/* Pills, chips, short UI */
+.ta-chip {
+  font-size: 0.75rem;
+  line-height: 1.3;
+  font-weight: 400;
+}
+
+/* Cinematic quote */
+.ta-quote {
+  font-size: clamp(1.15rem, 4.2vw, 1.45rem);
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* Countdown unit labels */
+.ta-unit {
+  font-size: 0.5625rem;
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+@media (min-width: 640px) {
+  .ta-unit {
+    font-size: 0.625rem;
+  }
+}
+
+.stitch-line {
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--color-vermilion) 0,
+    var(--color-vermilion) 5px,
+    transparent 5px,
+    transparent 11px
+  );
+  height: 1.5px;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-marigold-dark);
+  outline-offset: 3px;
+}
+
+.hero-reveal-ready {
+  animation: hero-settle 1.4s var(--motion-ease) both;
+}
+
+@keyframes hero-settle {
+  from {
+    opacity: 0.35;
+    filter: brightness(1.35);
+  }
+  to {
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-reveal-ready {
+    animation: none;
+  }
+}
+
+.section-ink {
+  color: var(--color-ink);
+}
+
+.section-on-dark {
+  color: var(--color-parchment);
+}
+
+.btn-primary {
+  background: var(--color-peacock);
+  color: var(--color-parchment);
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+}
+
